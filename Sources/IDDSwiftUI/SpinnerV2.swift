@@ -1,6 +1,6 @@
 //
 //  SpinnerV2.swift
-//  IDDSwiftCommons
+//  IDDSwiftUI
 //
 //  Created by Klajd Deda on 12/8/22.
 //  Copyright (C) 1997-2023 id-design, inc. All rights reserved.

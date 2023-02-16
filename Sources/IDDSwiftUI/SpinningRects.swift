@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  IDDSwiftCommons
+//  SpinningRects.swift
+//  IDDSwiftUI
 //
 //  Created by Klajd Deda on 1/9/23.
 //  Copyright (C) 1997-2023 id-design, inc. All rights reserved.
@@ -10,7 +10,6 @@ import Foundation
 import SwiftUI
 
 struct SpinningRects: View {
-
     @State private var moving = false
     @State var scale: Double = 1.0
     var count = 8

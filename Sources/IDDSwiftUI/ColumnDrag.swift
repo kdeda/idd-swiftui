@@ -1,6 +1,6 @@
 //
 //  ColumnDrag.swift
-//  IDDSwiftCommons
+//  IDDSwiftUI
 //
 //  Created by Klajd Deda on 1/18/23.
 //  Copyright (C) 1997-2023 id-design, inc. All rights reserved.
@@ -177,44 +177,44 @@ public struct ColumnDragContainer: View {
         VStack(spacing: 10) {
             HStack {
                 ForEach(0 ..< colors.count, id: \.self) { index in
-                    Rectangle()
-                        .frame(width: columnWidths[index])
-                        .foregroundColor(colors[index])
-                        .overlay {
-                            ColumnDrag(
-                                minWidth: ColumnConfig.MIN_WIDTH,
-                                ideal: Binding<CGFloat>(
-                                    get: { columnWidths[index] },
-                                    set: { newValue in
-                                        columnWidths[index] = newValue
-                                        let flags = NSApp.currentEvent?.modifierFlags ?? NSEvent.ModifierFlags(rawValue: 0)
-                                        if flags.contains([.option]) {
-                                            // DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                            // this will fucking break the DragGesture locatiom for us
-                                            // we will move each column to be of the exact width and so the column before us
-                                            // will become wider for example
-                                            // this will cause the DragGesture locatiom to appear as if we moved left !!!!
-                                            // fuck apple.
-                                            //
-                                            Log4swift[Self.self].info("optionClick[\(index)]: '\(newValue)'")
+                    ZStack {
+                        Rectangle()
+                            .frame(width: columnWidths[index])
+                            .foregroundColor(colors[index])
+                        ColumnDrag(
+                            minWidth: ColumnConfig.MIN_WIDTH,
+                            ideal: Binding<CGFloat>(
+                                get: { columnWidths[index] },
+                                set: { newValue in
+                                    columnWidths[index] = newValue
+                                    let flags = NSApp.currentEvent?.modifierFlags ?? NSEvent.ModifierFlags(rawValue: 0)
+                                    if flags.contains([.option]) {
+                                        // DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        // this will fucking break the DragGesture locatiom for us
+                                        // we will move each column to be of the exact width and so the column before us
+                                        // will become wider for example
+                                        // this will cause the DragGesture locatiom to appear as if we moved left !!!!
+                                        // fuck apple.
+                                        //
+                                        Log4swift[Self.self].info("optionClick[\(index)]: '\(newValue)'")
 
-                                            // this works, since we are avoiding to change the origin of the ColumnDrag before us
-                                            // columnWidths = (0 ..< columnWidths.count)
-                                            //     .reduce(into: columnWidths) { partialResult, nextIndex in
-                                            //         if nextIndex >= index {
-                                            //             partialResult[nextIndex] = newValue
-                                            //         }
-                                            //     }
-                                            columnWidths = columnWidths.map { _ in newValue }
-                                            // }
-                                        }
-                                    }),
-                                // $columnWidths[index], // .animation(.linear(duration: 5.0)),
-                                maxWidth: ColumnConfig.MAX_WIDTH,
-                                id: index
-                            )
-                            // .debug()
-                        }
+                                        // this works, since we are avoiding to change the origin of the ColumnDrag before us
+                                        // columnWidths = (0 ..< columnWidths.count)
+                                        //     .reduce(into: columnWidths) { partialResult, nextIndex in
+                                        //         if nextIndex >= index {
+                                        //             partialResult[nextIndex] = newValue
+                                        //         }
+                                        //     }
+                                        columnWidths = columnWidths.map { _ in newValue }
+                                        // }
+                                    }
+                                }),
+                            // $columnWidths[index], // .animation(.linear(duration: 5.0)),
+                            maxWidth: ColumnConfig.MAX_WIDTH,
+                            id: index
+                        )
+                        // .debug()
+                    }
                 }
                 Spacer()
             }

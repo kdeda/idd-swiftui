@@ -1,6 +1,6 @@
 //
 //  AnimationTimer.swift
-//  IDDSwiftCommons
+//  IDDSwiftUI
 //
 //  Created by Klajd Deda on 12/22/22.
 //  Copyright (C) 1997-2023 id-design, inc. All rights reserved.
