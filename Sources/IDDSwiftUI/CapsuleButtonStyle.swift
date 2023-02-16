@@ -8,6 +8,9 @@
 
 import SwiftUI
 
+/**
+ A simple capsule button style
+ */
 public struct CapsuleButtonStyle: ButtonStyle {
     public init() {
     }

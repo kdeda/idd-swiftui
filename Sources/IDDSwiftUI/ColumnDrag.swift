@@ -10,6 +10,9 @@ import Foundation
 import SwiftUI
 import Log4swift
 
+/**
+ Very cool, It lets you grab the corner of a view and resize it.
+ */
 public struct ColumnDrag: View {
     private static var padding: CGFloat = 3
     private static var imageHeight: CGFloat = 8
