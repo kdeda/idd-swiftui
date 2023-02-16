@@ -92,6 +92,7 @@ public struct SearchTextField: View {
     var placeHolder: String = "Search..."
     @Binding var text: String
     @State var isFocused: Bool = false
+    @Environment(\.colorScheme) var colorScheme
 
     #if !os(macOS)
     private let backgroundColor = Color(UIColor.secondarySystemBackground)
@@ -99,6 +100,12 @@ public struct SearchTextField: View {
     private let backgroundColor = Color(NSColor.controlBackgroundColor)
     #endif
 
+    private var rectColor: Color {
+        colorScheme == .light
+        ? Color.white
+        : Color.black
+    }
+    
     public init(_ placeHolder: String, text: Binding<String>) {
         self.placeHolder = placeHolder
         self._text = text
@@ -108,7 +115,7 @@ public struct SearchTextField: View {
         GeometryReader { proxy in
             ZStack {
                 RoundedRectangle(cornerRadius: 5, style: .continuous)
-                    .fill(Color.white)
+                    .fill(rectColor)
                     .frame(width: proxy.size.width, height: 22)
                     .overlay(
                         RoundedRectangle(cornerRadius: 5, style: .continuous)
@@ -178,5 +185,17 @@ struct SearchBar_Previews: PreviewProvider {
             }
             .padding()
         }
+        .background(Color.windowBackgroundColor)
+        .environment(\.colorScheme, .light)
+
+        Group {
+            VStack {
+                SearchTextField("Search...", text: .constant("123"))
+                    .frame(width: 220)
+            }
+            .padding()
+        }
+        .background(Color.windowBackgroundColor)
+        .environment(\.colorScheme, .dark)
     }
 }
