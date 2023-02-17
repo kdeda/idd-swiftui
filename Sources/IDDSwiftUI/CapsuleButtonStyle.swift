@@ -46,7 +46,7 @@ struct CapsuleButtonStyle_Previews: PreviewProvider {
         }
         .padding(20)
         .frame(width: 480, height: 320)
-        .background(Color(NSColor.windowBackgroundColor))
+        .background(Color.windowBackgroundColor)
         .environment(\.colorScheme, .light)
 
         VStack {
@@ -62,7 +62,7 @@ struct CapsuleButtonStyle_Previews: PreviewProvider {
         }
         .padding(20)
         .frame(width: 480, height: 320)
-        .background(Color(NSColor.windowBackgroundColor))
+        .background(Color.windowBackgroundColor)
         .environment(\.colorScheme, .dark)
     }
 }
