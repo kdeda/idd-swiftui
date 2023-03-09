@@ -17,21 +17,21 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/kdeda/idd-log4-swift.git", from: "1.2.3"),
-        .package(url: "https://github.com/kdeda/idd-swift-commons.git", from: "1.4.1")
+        .package(url: "https://github.com/kdeda/idd-swift.git", from: "1.0.4")
     ],
     targets: [
         .target(
             name: "IDDSwiftUI",
             dependencies: [
                 .product(name: "Log4swift", package: "idd-log4-swift"),
-                .product(name: "SwiftCommons", package: "idd-swift-commons")
+                .product(name: "IDDSwift", package: "idd-swift")
             ]
         ),
         .testTarget(
             name: "IDDSwiftUITests",
             dependencies: [
                 .product(name: "Log4swift", package: "idd-log4-swift"),
-                .product(name: "SwiftCommons", package: "idd-swift-commons")
+                .product(name: "IDDSwift", package: "idd-swift")
             ]
         )
     ]

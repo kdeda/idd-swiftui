@@ -8,7 +8,7 @@
 
 import SwiftUI
 import Combine
-import SwiftCommons
+import IDDSwift
 import Log4swift
 
 // gif spinner

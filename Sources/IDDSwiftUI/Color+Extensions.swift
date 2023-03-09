@@ -12,7 +12,6 @@ import SwiftUI
 extension Color {
     public static var selectedContentBackgroundColor: Color = Color(NSColor.selectedContentBackgroundColor)
     public static var windowBackgroundColor: Color = Color(NSColor.windowBackgroundColor)
-    public static var windowBackground = Color(NSColor.windowBackground)
     public static var lightGray: Color = Color(NSColor.lightGray)
 }
 
