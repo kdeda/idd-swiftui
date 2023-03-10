@@ -17,7 +17,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/kdeda/idd-log4-swift-v2.git", from: "2.0.2"),
-        .package(url: "https://github.com/kdeda/idd-swift.git", from: "1.0.10")
+        .package(url: "https://github.com/kdeda/idd-swift.git", from: "1.2.1")
     ],
     targets: [
         .target(
