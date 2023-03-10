@@ -53,7 +53,7 @@ extension NSTextField {
 //
 //    func updateNSView(_ nsView: NSTextField, context: NSViewRepresentableContext<MyTextField>) {
 //        nsView.stringValue = text
-//        Log4swift["MyTextField"].logInfo("stringValue: '\(text)'")
+//        Log4swift["MyTextField"].info("stringValue: '\(text)'")
 //    }
 //
 //    func makeCoordinator() -> MyTextField.Coordinator {
@@ -134,20 +134,20 @@ public struct SearchTextField: View {
                     // experimental code ...
 //                    MyTextField(placeHolder, text: $text, isFocused: $isFocused)
 //                        .whenHovered { newValue in
-//                            Log4swift[Self.self].logInfo("whenHovered: \(newValue) text: \(text)")
+//                            Log4swift[Self.self].info("whenHovered: \(newValue) text: \(text)")
 //                            self.isFocused = newValue
 //                        }
 
                     TextField(placeHolder, text: $text, onEditingChanged: { (changed) in
-                        Log4swift[Self.self].logInfo("onEditingChanged: \(changed) text: \(text)")
+                        Log4swift[Self.self].info("onEditingChanged: \(changed) text: \(text)")
 
                         self.isFocused = changed
                     }, onCommit: {
-                        Log4swift[Self.self].logInfo("onCommit: \(text)")
+                        Log4swift[Self.self].info("onCommit: \(text)")
                     })
                     .textFieldStyle(PlainTextFieldStyle())
                     .whenHovered { newValue in
-                        Log4swift[Self.self].logInfo("whenHovered: \(newValue) text: \(text)")
+                        Log4swift[Self.self].info("whenHovered: \(newValue) text: \(text)")
                         self.isFocused = newValue
                     }
 
@@ -167,7 +167,7 @@ public struct SearchTextField: View {
                     }
                 }
                 .focusable(isFocused, onFocusChange: { focused in
-                    Log4swift[Self.self].logInfo("onFocusChange: \(focused)")
+                    Log4swift[Self.self].info("onFocusChange: \(focused)")
                 })
 
             }
