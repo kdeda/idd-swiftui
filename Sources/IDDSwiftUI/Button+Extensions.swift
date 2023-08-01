@@ -26,12 +26,16 @@ struct Button_Extensions_Previews: PreviewProvider {
             Button {
                 // Action
             } label: {
-                Image(systemName: "keyboard")
+                Image(systemName: "eject.fill")
             }
+            .padding()
 
-            Button(systemImage: "keyboard") {
+            Button(systemImage: "delete.left.fill") {
                 // Action
             }
+            .padding()
+            .border(.yellow)
         }
+        .padding()
     }
 }
