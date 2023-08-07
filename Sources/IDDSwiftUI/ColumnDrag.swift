@@ -106,7 +106,7 @@ public struct ColumnDrag: View {
                             height: Self.imageHeight
                         )
                         .padding(.all, Self.padding)
-                        // .border(.red)
+                    // .border(.red)
                         .rotationEffect(debugUI ? .degrees(0) : .degrees(-90))
                     // .offset(x: 1)
                         .background(scrollerBackgroundColor)
@@ -125,7 +125,7 @@ public struct ColumnDrag: View {
                                     let flags = NSApp.currentEvent?.modifierFlags ?? NSEvent.ModifierFlags(rawValue: 0)
                                     let optionClick = flags.contains([.option])
 
-                                    Log4swift["ColumnDrag"].info("onChanged[\(id)] startLocation: '\(value.startLocation.x.rounded(.down))' location: '\(value.location.x.rounded(.down))' width: '\(width.rounded(.down))' offset: '\(offset.rounded(.down))' columnWidth: '\(columnWidth + width)' optionClick: '\(optionClick)'")
+                                    Log4swift["ColumnDrag"].debug("onChanged[\(id)] startLocation: '\(value.startLocation.x.rounded(.down))' location: '\(value.location.x.rounded(.down))' width: '\(width.rounded(.down))' offset: '\(offset.rounded(.down))' columnWidth: '\(columnWidth + width)' optionClick: '\(optionClick)'")
 
                                     if frameOrigin == .none && optionClick {
                                         frameOrigin = proxy.frame(in: .global).origin
@@ -137,7 +137,7 @@ public struct ColumnDrag: View {
                                     let offset = offset(proxy: proxy)
                                     let width = (value.location.x - value.startLocation.x + offset).rounded(.down)
 
-                                    Log4swift["ColumnDrag"].info("onEnded[\(id)] width: '\(width.rounded(.down))' offset: '\(offset.rounded(.down))' columnWidth: '\(columnWidth + width)'")
+                                    Log4swift["ColumnDrag"].debug("onEnded[\(id)] width: '\(width.rounded(.down))' offset: '\(offset.rounded(.down))' columnWidth: '\(columnWidth + width)'")
                                     add(width: width)
                                     frameOrigin = .none
                                 }
