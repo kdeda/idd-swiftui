@@ -57,11 +57,11 @@ struct SliceInfo {
 fileprivate struct SliceView: View, Animatable {
     var info: SliceInfo
     var index: Int
+    @ObservedObject var timers: AnimationTimers
     /**
      Each slice is delayed a bit from the previous to create the illusion of progress
      */
     var delay: Double
-    @StateObject private var timer = AnimationTimer()
     @State var opacity: Double = 0.1
 
     /**
@@ -122,9 +122,10 @@ fileprivate struct SliceView: View, Animatable {
 //        )
 //    }
 
-    init(info: SliceInfo, index: Int) {
+    init(info: SliceInfo, index: Int, timers: AnimationTimers) {
         self.info = info
         self.index = index
+        self.timers = timers
         self.delay = Double(index) * (SliceInfo.duration / Double(info.sliceCount))
     }
 
@@ -139,13 +140,12 @@ fileprivate struct SliceView: View, Animatable {
                 .rotationEffect(.degrees(info.degrees * Double(index)), anchor: .bottom)
                 .opacity(opacity)
                 .onAppear {
-                    timer.tag = index
-                    timer.repeatEvery(timeInterval: SliceInfo.duration) {
+                    timers.timer(index: index).repeatEvery(timeInterval: SliceInfo.duration) {
                         animation()
                     }
                 }
                 .onDisappear {
-                    timer.stop()
+                    timers.timer(index: index).stop()
                 }
                 .offset(
                     x: info.width / 2 - info.sliceWidth / 2,
@@ -169,8 +169,10 @@ fileprivate struct SliceView: View, Animatable {
     }
 }
 
+// https://daringsnowball.net/articles/stateobject-lifecycle/
 public struct Spinner: View {
     private var isAnimating: Bool
+    @StateObject private var timers = AnimationTimers()
     @State var opacity: Double = 1.0
     @State var scale: Double = 1.0
 
@@ -179,13 +181,15 @@ public struct Spinner: View {
     }
 
     public var body: some View {
+        // Log4swift[Self.self].info("isAnimating: '\(isAnimating)'")
+
         return GeometryReader { proxy in
             if isAnimating {
                 let info = SliceInfo(proxy: proxy)
 
                 // Text("\(Double(info.sliceWidth).with2Digits)").font(.caption)
                 ForEach(0 ..< info.sliceCount, id: \.self) { index in
-                    SliceView(info: info, index: index)
+                    SliceView(info: info, index: index, timers: timers)
                 }
                 // .background(Color.yellow)
                 .frame(width: proxy.size.width, height: proxy.size.height)

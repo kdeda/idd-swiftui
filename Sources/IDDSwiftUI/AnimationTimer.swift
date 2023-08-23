@@ -31,7 +31,9 @@ public final class AnimationTimer: ObservableObject {
     }
 
     deinit {
-        // Log4swift[Self.self].info("index: '\(self.tag)' task: '\(task)' self: '\(objectID)'")
+        if self.tag == 5 {
+            Log4swift[Self.self].info("index: '\(self.tag)' self: '\(objectID)'")
+        }
         self.task?.cancel()
         self.task = nil
         timer?.invalidate()
@@ -75,12 +77,19 @@ public final class AnimationTimer: ObservableObject {
     /**
      Will repeat the animation every timeInterval seconds.
      The timeInterval should be the sum of all the animation durations.
+     This code depends on keeping the main thread not blocked for too long.
+     If it is we will see the warning that we 'was supposed to sleep for ...'
      */
     public func repeatEvery(timeInterval: TimeInterval, _ animation: @escaping () -> Void) {
+        guard timer == nil
+        else { return }
+
         var startDate = Date()
         let durationInMilliseconds = UInt64(timeInterval * 1000)
 
-        // Log4swift[Self.self].info("start index: '\(self.tag)'")
+        if self.tag == 5 {
+            Log4swift[Self.self].info("start index: '\(self.tag)' self: '\(objectID)'")
+        }
         timer?.invalidate()
         timer = Timer.scheduledTimer(
             withTimeInterval: Double(durationInMilliseconds) / 1000.0,
@@ -91,7 +100,7 @@ public final class AnimationTimer: ObservableObject {
             guard let self = self
             else { return }
 
-            // Log4swift[Self.self].info("tag: '\(self.tag)'")
+            // Log4swift[Self.self].info("tag: '\(self.tag)' self: '\(objectID)'")
             animation()
             let extras = (startDate.elapsedTimeInSeconds - timeInterval) * 1000.0
             if extras > 100.0 {
@@ -99,7 +108,10 @@ public final class AnimationTimer: ObservableObject {
                 // using timers and sleep is not a good idea
                 // the problem is in the nature of the animation function
                 //
-                Log4swift[Self.self].info("start index: '\(self.tag)' was supposed to sleep for: '\(durationInMilliseconds) ms' but slept an extra: '\(extras.with2Digits) ms'")
+                if self.tag == 5 {
+                    // warning
+                    Log4swift[Self.self].info("start index: '\(self.tag)' self: '\(objectID)' was supposed to sleep for: '\(durationInMilliseconds) ms' but slept an extra: '\(extras.with2Digits) ms'")
+                }
             }
             startDate = Date()
         }
@@ -107,7 +119,9 @@ public final class AnimationTimer: ObservableObject {
     }
 
     func stop() {
-        // Log4swift[Self.self].info("index: '\(self.tag)' task: '\(task)' self: '\(objectID)'")
+        if self.tag == 5 {
+            Log4swift[Self.self].info("index: '\(self.tag)' self: '\(objectID)'")
+        }
         self.task?.cancel()
         self.task = nil
         timer?.invalidate()
