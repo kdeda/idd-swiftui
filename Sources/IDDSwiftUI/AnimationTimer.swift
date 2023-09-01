@@ -110,7 +110,7 @@ public final class AnimationTimer: ObservableObject {
                 //
                 if self.tag == 5 {
                     // warning
-                    Log4swift[Self.self].info("start index: '\(self.tag)' self: '\(objectID)' was supposed to sleep for: '\(durationInMilliseconds) ms' but slept an extra: '\(extras.with2Digits) ms'")
+                    Log4swift[Self.self].info("start index: '\(self.tag)' self: '\(self.objectID)' was supposed to sleep for: '\(durationInMilliseconds) ms' but slept an extra: '\(extras.with2Digits) ms'")
                 }
             }
             startDate = Date()

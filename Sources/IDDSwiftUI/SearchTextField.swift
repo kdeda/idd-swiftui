@@ -160,7 +160,6 @@ public struct SearchTextField: View {
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 14, height: 14)
                                 .padding(.trailing, 3)
-                                .opacity(0.5)
                         }
                         .buttonStyle(PlainButtonStyle())
                         .opacity(self.text == "" ? 0 : 0.5)
