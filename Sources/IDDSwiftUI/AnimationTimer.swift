@@ -119,9 +119,10 @@ public final class AnimationTimer: ObservableObject {
     }
 
     func stop() {
-        if self.tag == 5 {
-            Log4swift[Self.self].info("index: '\(self.tag)' self: '\(objectID)'")
-        }
+        // DEBUG
+        // if self.tag == 5 {
+        //     Log4swift[Self.self].info("index: '\(self.tag)' self: '\(objectID)'")
+        // }
         self.task?.cancel()
         self.task = nil
         timer?.invalidate()

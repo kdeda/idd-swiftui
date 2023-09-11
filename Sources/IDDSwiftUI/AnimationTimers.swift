@@ -17,7 +17,8 @@ public class AnimationTimers: ObservableObject {
     }
 
     deinit {
-        Log4swift[Self.self].info("timersByTag: '\(timersByTag.count)'")
+        // DEBUG
+        // Log4swift[Self.self].info("timersByTag: '\(timersByTag.count)'")
     }
 
     public func timer(index: Int) -> AnimationTimer {
