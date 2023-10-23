@@ -57,6 +57,7 @@ internal struct SearchFocusTextField: NSViewRepresentable {
         // Log4swift[Self.self].info("isEditing: \(isEditing)")
 
         nsView.stringValue = text
+        nsView.placeholderString = placeholder
         if !self.$isFocused.wrappedValue && isEditing {
             // we are told to defocus and we are focused
             // for a change of state
