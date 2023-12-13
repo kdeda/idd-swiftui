@@ -11,14 +11,14 @@ import Log4swift
 
 /**
  Given a particular non repeating animation sequence, repeat it after a given interval.
- This type exists to we can compose Animations.
+ This type exists so we can compose Animations.
 
- Sat we want to combine 2 animations.
+ Say we want to combine 2 animations.
 
  1 do something with a shortDuration.
  2 after that do something with longerDuration.
 
- Than we want to repeat this forever.
+ Then we want to repeat this forever.
  */
 public final class AnimationTimer: ObservableObject {
     // debug support
@@ -31,9 +31,10 @@ public final class AnimationTimer: ObservableObject {
     }
 
     deinit {
-        if self.tag == 5 {
-            Log4swift[Self.self].info("index: '\(self.tag)' self: '\(objectID)'")
-        }
+        // DEBUG
+        // if self.tag == 5 {
+        //     Log4swift[Self.self].info("index: '\(self.tag)' self: '\(objectID)'")
+        // }
         self.task?.cancel()
         self.task = nil
         timer?.invalidate()
@@ -79,6 +80,10 @@ public final class AnimationTimer: ObservableObject {
      The timeInterval should be the sum of all the animation durations.
      This code depends on keeping the main thread not blocked for too long.
      If it is we will see the warning that we 'was supposed to sleep for ...'
+
+     However the main thread can be blocked by just grabbing the window sizing
+     and attempting to size the window.
+     So using MainActor crap still does not solve the issue, some vents will be skipped.
      */
     public func repeatEvery(timeInterval: TimeInterval, _ animation: @escaping () -> Void) {
         guard timer == nil
@@ -87,9 +92,10 @@ public final class AnimationTimer: ObservableObject {
         var startDate = Date()
         let durationInMilliseconds = UInt64(timeInterval * 1000)
 
-        if self.tag == 5 {
-            Log4swift[Self.self].info("start index: '\(self.tag)' self: '\(objectID)'")
-        }
+        // DEBUG
+        // if self.tag == 5 {
+        //    Log4swift[Self.self].info("start index: '\(self.tag)' self: '\(objectID)'")
+        // }
         timer?.invalidate()
         timer = Timer.scheduledTimer(
             withTimeInterval: Double(durationInMilliseconds) / 1000.0,
