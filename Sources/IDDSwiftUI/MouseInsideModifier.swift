@@ -3,11 +3,13 @@
 //  IDDSwiftUI
 //
 //  Created by Klajd Deda on 4/19/21.
-//  Copyright (C) 1997-2023 id-design, inc. All rights reserved.
+//  Copyright (C) 1997-2024 id-design, inc. All rights reserved.
 //
 //  With many thanks to:
 //  https://gist.github.com/importRyan/c668904b0c5442b80b6f38a980595031
 //
+
+#if os(macOS)
 
 import SwiftUI
 
@@ -80,3 +82,5 @@ extension View {
         modifier(MouseInsideModifier(mouseIsInside))
     }
 }
+
+#endif
