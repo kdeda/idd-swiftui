@@ -3,8 +3,10 @@
 //  IDDSwiftUI
 //
 //  Created by Klajd Deda on 9/11/23.
-//  Copyright (C) 1997-2023 id-design, inc. All rights reserved.
+//  Copyright (C) 1997-2024 id-design, inc. All rights reserved.
 //
+
+#if os(macOS)
 
 import Foundation
 import SwiftUI
@@ -121,3 +123,5 @@ extension SearchFocusTextField {
         }
     }
 }
+
+#endif

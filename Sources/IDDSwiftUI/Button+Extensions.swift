@@ -3,7 +3,7 @@
 //  IDDSwiftUI
 //
 //  Created by Klajd Deda on 4/9/21.
-//  Copyright (C) 1997-2023 id-design, inc. All rights reserved.
+//  Copyright (C) 1997-2024 id-design, inc. All rights reserved.
 //
 
 import SwiftUI

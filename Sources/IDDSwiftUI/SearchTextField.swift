@@ -3,8 +3,10 @@
 //  IDDSwiftUI
 //
 //  Created by Klajd Deda on 5/5/21.
-//  Copyright (C) 1997-2023 id-design, inc. All rights reserved.
+//  Copyright (C) 1997-2024 id-design, inc. All rights reserved.
 //
+
+#if os(macOS)
 
 import SwiftUI
 import AppKit
@@ -131,3 +133,4 @@ struct SearchBar_Previews: PreviewProvider {
     }
 }
 
+#endif

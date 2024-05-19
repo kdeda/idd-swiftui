@@ -3,8 +3,10 @@
 //  IDDSwiftUI
 //
 //  Created by Klajd Deda on 1/18/23.
-//  Copyright (C) 1997-2023 id-design, inc. All rights reserved.
+//  Copyright (C) 1997-2024 id-design, inc. All rights reserved.
 //
+
+#if os(macOS)
 
 import Foundation
 import SwiftUI
@@ -23,7 +25,7 @@ public struct ColumnDrag: View {
     var minWidth: CGFloat
     @Binding var columnWidth: CGFloat
     var maxWidth: CGFloat
-    var id: Int
+    var columnIndex: Int
     @Environment(\.colorScheme) var colorScheme
     @State private var frameOrigin: CGPoint?
     private var debugUI = false
@@ -68,12 +70,12 @@ public struct ColumnDrag: View {
         minWidth: CGFloat,
         ideal: Binding<CGFloat>,
         maxWidth: CGFloat,
-        id: Int
+        columnIndex: Int
     ) {
         self.minWidth = minWidth
         self._columnWidth = ideal
         self.maxWidth = maxWidth
-        self.id = id
+        self.columnIndex = columnIndex
     }
 
     public func debug() -> Self {
@@ -122,10 +124,10 @@ public struct ColumnDrag: View {
                                 .onChanged { value in
                                     let offset = offset(proxy: proxy)
                                     let width = (value.location.x - value.startLocation.x + offset).rounded(.down)
-                                    let flags = NSApp.currentEvent?.modifierFlags ?? NSEvent.ModifierFlags(rawValue: 0)
+                                    let flags = NSApplication.shared.currentEvent?.modifierFlags ?? NSEvent.ModifierFlags(rawValue: 0)
                                     let optionClick = flags.contains([.option])
 
-                                    Log4swift["ColumnDrag"].debug("onChanged[\(id)] startLocation: '\(value.startLocation.x.rounded(.down))' location: '\(value.location.x.rounded(.down))' width: '\(width.rounded(.down))' offset: '\(offset.rounded(.down))' columnWidth: '\(columnWidth + width)' optionClick: '\(optionClick)'")
+                                    Log4swift[Self.self].debug("onChanged[\(columnIndex)] startLocation: '\(value.startLocation.x.rounded(.down))' location: '\(value.location.x.rounded(.down))' width: '\(width.rounded(.down))' offset: '\(offset.rounded(.down))' columnWidth: '\(columnWidth + width)' optionClick: '\(optionClick)'")
 
                                     if frameOrigin == .none && optionClick {
                                         frameOrigin = proxy.frame(in: .global).origin
@@ -137,7 +139,7 @@ public struct ColumnDrag: View {
                                     let offset = offset(proxy: proxy)
                                     let width = (value.location.x - value.startLocation.x + offset).rounded(.down)
 
-                                    Log4swift["ColumnDrag"].debug("onEnded[\(id)] width: '\(width.rounded(.down))' offset: '\(offset.rounded(.down))' columnWidth: '\(columnWidth + width)'")
+                                    Log4swift[Self.self].debug("onEnded[\(columnIndex)] width: '\(width.rounded(.down))' offset: '\(offset.rounded(.down))' columnWidth: '\(columnWidth + width)'")
                                     add(width: width)
                                     frameOrigin = .none
                                 }
@@ -166,8 +168,8 @@ public struct ColumnDrag: View {
 
 public struct ColumnDragContainer: View {
     struct ColumnConfig {
-        static let MIN_WIDTH: CGFloat = 260
-        static let MAX_WIDTH: CGFloat = 440
+        static let MIN_WIDTH: CGFloat = 160
+        static let MAX_WIDTH: CGFloat = 340
     }
 
     @State var columnWidths: [CGFloat] = [ColumnConfig.MIN_WIDTH, ColumnConfig.MIN_WIDTH, ColumnConfig.MIN_WIDTH, ColumnConfig.MIN_WIDTH]
@@ -184,37 +186,44 @@ public struct ColumnDragContainer: View {
                         Rectangle()
                             .frame(width: columnWidths[index])
                             .foregroundColor(colors[index])
+//                        VStack {
+//                            Text("minWidth: \(ColumnConfig.MIN_WIDTH)")
+//                            Text("ideal: \(columnWidths[index])")
+//                            Text("index: \(index)")
+//                        }
                         ColumnDrag(
                             minWidth: ColumnConfig.MIN_WIDTH,
-                            ideal: Binding<CGFloat>(
-                                get: { columnWidths[index] },
-                                set: { newValue in
-                                    columnWidths[index] = newValue
-                                    let flags = NSApp.currentEvent?.modifierFlags ?? NSEvent.ModifierFlags(rawValue: 0)
-                                    if flags.contains([.option]) {
-                                        // DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                        // this will fucking break the DragGesture locatiom for us
-                                        // we will move each column to be of the exact width and so the column before us
-                                        // will become wider for example
-                                        // this will cause the DragGesture locatiom to appear as if we moved left !!!!
-                                        // fuck apple.
-                                        //
-                                        Log4swift[Self.self].info("optionClick[\(index)]: '\(newValue)'")
-
-                                        // this works, since we are avoiding to change the origin of the ColumnDrag before us
-                                        // columnWidths = (0 ..< columnWidths.count)
-                                        //     .reduce(into: columnWidths) { partialResult, nextIndex in
-                                        //         if nextIndex >= index {
-                                        //             partialResult[nextIndex] = newValue
-                                        //         }
-                                        //     }
-                                        columnWidths = columnWidths.map { _ in newValue }
-                                        // }
-                                    }
-                                }),
+                            ideal: $columnWidths[index],
+//                            ideal: Binding<CGFloat>(
+//                                get: { self.columnWidths[index] },
+//                                set: { newValue in
+//                                    let flags = NSApplication.shared.currentEvent?.modifierFlags ?? NSEvent.ModifierFlags(rawValue: 0)
+//
+//                                    columnWidths[index] = newValue
+//                                    if flags.contains([.option]) {
+//                                        // DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+//                                        // this will fucking break the DragGesture locatiom for us
+//                                        // we will move each column to be of the exact width and so the column before us
+//                                        // will become wider for example
+//                                        // this will cause the DragGesture locatiom to appear as if we moved left !!!!
+//                                        // fuck apple.
+//                                        //
+//                                        Log4swift[Self.self].info("optionClick[\(index)]: '\(newValue)'")
+//
+//                                        // this works, since we are avoiding to change the origin of the ColumnDrag before us
+//                                        // columnWidths = (0 ..< columnWidths.count)
+//                                        //     .reduce(into: columnWidths) { partialResult, nextIndex in
+//                                        //         if nextIndex >= index {
+//                                        //             partialResult[nextIndex] = newValue
+//                                        //         }
+//                                        //     }
+//                                        columnWidths = columnWidths.map { _ in newValue }
+//                                        // }
+//                                    }
+//                                }),
                             // $columnWidths[index], // .animation(.linear(duration: 5.0)),
                             maxWidth: ColumnConfig.MAX_WIDTH,
-                            id: index
+                            columnIndex: index
                         )
                         // .debug()
                     }
@@ -240,3 +249,5 @@ struct ColumnDrag_Previews: PreviewProvider {
         ColumnDragContainer()
     }
 }
+
+#endif
