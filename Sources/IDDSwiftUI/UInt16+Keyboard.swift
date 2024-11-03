@@ -14,10 +14,13 @@ import Foundation
 public extension UInt16 {
     // Layout-independent Keys
     // eg.These key codes are always the same key on all layouts.
-    static let returnKey: UInt16 = 0x24
+    static let downArrow: UInt16 = 0x7D
     static let enter: UInt16 = 0x4C
-    static let space: UInt16 = 0x31
+    static let escape: UInt16 = 0x35
     static let leftArrow: UInt16 = 0x7B
+    static let returnKey: UInt16 = 0x24
     static let rightArrow: UInt16 = 0x7C
+    static let space: UInt16 = 0x31
+    static let upArrow: UInt16 = 0x7E
 }
 
