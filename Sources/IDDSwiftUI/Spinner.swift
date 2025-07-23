@@ -26,8 +26,8 @@ import Log4swift
 
 struct SliceInfo {
     static let duration: TimeInterval = 0.9
-    static var shortDuration = Self.duration/6
-    static var longDuration = 5*Self.duration/6
+    static let shortDuration = Self.duration/6
+    static let longDuration = 4*Self.duration/6
 
     let sliceCount: Int
     let innerCircleRadius: CGFloat
@@ -57,12 +57,12 @@ struct SliceInfo {
 fileprivate struct SliceView: View, Animatable {
     var info: SliceInfo
     var index: Int
-    @ObservedObject var timers: AnimationTimers
     /**
      Each slice is delayed a bit from the previous to create the illusion of progress
      */
     var delay: Double
     @State var opacity: Double = 0.1
+    @State private var repeatCount: Int = 1
 
     /**
      We want to combine 2 animations.
@@ -78,7 +78,7 @@ fileprivate struct SliceView: View, Animatable {
      The trick here is to make sure that SliceInfo.shortDuration + SliceInfo.longDuration
      is less or equal to the duration on the SliceViewModel
      */
-    private func animation() -> Void {
+    private func animate() -> Void {
         withAnimation(
             .easeIn(duration: SliceInfo.shortDuration)
             .delay(delay)
@@ -91,41 +91,21 @@ fileprivate struct SliceView: View, Animatable {
         ) {
             self.opacity = 0.1
         }
+        DispatchQueue.main.asyncAfter(deadline: .now() + SliceInfo.duration) {
+            // remember the new value at the end of the animation
+            if index > 0 && index < 2 {
+                Log4swift[Self.self].info("index: '\(index)'")
+            }
+            self.repeatCount += 1
+            if self.repeatCount > 1000 {
+                self.repeatCount = 1
+            }
+        }
     }
 
-//    enum Transition {
-//        case first
-//        case second
-//
-//        var opacity: Double {
-//            switch self {
-//            case .first: return 0.1
-//            case .second: return 1.0
-//            }
-//        }
-//    }
-//
-//    @State var animationCount: Int = 1
-//    var animationEffect: AnimationEffect<Transition> {
-//        .init(
-//            index: index,
-//            .easeIn(duration: SliceInfo.shortDuration)
-//            .delay(delay),
-//            state: .first,
-//            duration: SliceInfo.shortDuration
-//        )
-//        .with(
-//            .easeOut(duration: SliceInfo.longDuration)
-//            .delay(delay + SliceInfo.shortDuration),
-//            state: .second,
-//            duration: SliceInfo.longDuration
-//        )
-//    }
-
-    init(info: SliceInfo, index: Int, timers: AnimationTimers) {
+    init(info: SliceInfo, index: Int) {
         self.info = info
         self.index = index
-        self.timers = timers
         self.delay = Double(index) * (SliceInfo.duration / Double(info.sliceCount))
     }
 
@@ -140,39 +120,22 @@ fileprivate struct SliceView: View, Animatable {
                 .rotationEffect(.degrees(info.degrees * Double(index)), anchor: .bottom)
                 .opacity(opacity)
                 .onAppear {
-                    timers.timer(index: index).repeatEvery(timeInterval: SliceInfo.duration) {
-                        animation()
-                    }
-                }
-                .onDisappear {
-                    timers.timer(index: index).stop()
+                    animate()
                 }
                 .offset(
                     x: info.width / 2 - info.sliceWidth / 2,
                     y: info.innerCircleRadius
                 )
+                .onChange(of: repeatCount, perform: { newValue in
+                    animate()
+                })
         }
-//
-//        AnimationEffectView(effect: animationEffect) { state in
-//            Group {
-//                Rectangle()
-//                    .frame(width: info.sliceWidth, height: info.sliceHeight)
-//                    .cornerRadius(info.sliceWidth/2)
-//                    .offset(y: -info.innerCircleRadius)
-//                    .rotationEffect(.degrees(info.degrees * Double(index)), anchor: .bottom)
-//                    .opacity(state.opacity)
-//            }
-//        }
-//        .frame(width: 128, height: 128)
-//        .offset(y: -info.innerCircleRadius / 2)
-//        .border(Color.yellow)
     }
 }
 
 // https://daringsnowball.net/articles/stateobject-lifecycle/
 public struct Spinner: View {
     private var isAnimating: Bool
-    @StateObject private var timers = AnimationTimers()
     @State var opacity: Double = 1.0
     @State var scale: Double = 1.0
 
@@ -189,7 +152,7 @@ public struct Spinner: View {
 
                 // Text("\(Double(info.sliceWidth).with2Digits)").font(.caption)
                 ForEach(0 ..< info.sliceCount, id: \.self) { index in
-                    SliceView(info: info, index: index, timers: timers)
+                    SliceView(info: info, index: index)
                 }
                 // .background(Color.yellow)
                 .frame(width: proxy.size.width, height: proxy.size.height)
@@ -220,7 +183,9 @@ public struct Spinner: View {
 
 struct SpinnerV3_Previews: PreviewProvider {
     static var previews: some View {
-        VStack {
+        Log4swift.configure(fileLogConfig: nil)
+
+        return VStack {
 //            SpinnerV3(isAnimating: true)
 //                .frame(width: 16, height: 16)
 //                .foregroundColor(.green)

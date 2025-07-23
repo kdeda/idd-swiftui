@@ -8,9 +8,60 @@
 
 #if os(macOS)
 
+import AppKit
 import Foundation
 import SwiftUI
 import Log4swift
+
+@MainActor
+final class ColumnDragViewModel: ObservableObject {
+    enum ViewType {
+        case verticalLine
+        case dragIcon
+    }
+    @Published var viewType: ViewType
+    private var task: Task<Void, Never>?
+
+    private func setScrollType(_ newValue: NSScroller.Style) {
+        Log4swift[Self.self].info("newValue: '\(newValue)'")
+        viewType = (newValue == .legacy) ? .dragIcon : .verticalLine
+    }
+
+    init() {
+        self.viewType = .dragIcon
+        listen()
+    }
+
+    deinit {
+        task?.cancel()
+        self.task = nil
+    }
+
+    private func listen() {
+        task = Task {
+            self.setScrollType(NSScroller.preferredScrollerStyle)
+
+            await withTaskGroup(of: Void.self) { group in
+                group.addTask {
+                    if #available(macOS 12, *) {
+                        for await notification in NotificationCenter.default.notifications(named: NSScroller.preferredScrollerStyleDidChangeNotification, object: nil) {
+                            Log4swift[Self.self].error("notification: '\(notification)'")
+                            if let userInfo = notification.userInfo,
+                               let styleInt = userInfo["NSScrollerStyle"] as? Int
+                            {
+                                let newStyle = NSScroller.Style.init(rawValue: styleInt) ?? .legacy
+                                await self.setScrollType(newStyle)
+                            }
+                        }
+                    } else {
+                        // should be on macos 13 and greater
+                        // Fallback on earlier versions
+                    }
+                }
+            }
+        }
+    }
+}
 
 /**
  Very cool, It lets you grab the corner of a view and resize it.
@@ -29,6 +80,8 @@ public struct ColumnDrag: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var frameOrigin: CGPoint?
     private var debugUI = false
+    private var isIcon = false
+    @StateObject private var viewModel = ColumnDragViewModel()
 
     private var scrollerBackgroundColor: Color {
         colorScheme == .light
@@ -84,70 +137,97 @@ public struct ColumnDrag: View {
         return copy
     }
 
-    /**
-     Even more crap.
-     We are designed in a way that the DragGesture is all the way at the bottom trailing of the GeometryReader.
-     If this design breaks the math at offset(proxy:) will be off.
+    private func updateCursor(_ inside: Bool) {
+        if inside {
+            NSCursor.resizeLeftRight.push()
+        } else {
+            NSCursor.pop()
+        }
+    }
 
-     Really hacky ...
-     We need a real NSViewRepresentable DragGesture
-     */
-    public var body: some View {
-        // Log4swift[Self.self].info("idealWidth[\(id)]: '\(idealWidth)'")
-        GeometryReader { proxy in
-            VStack(spacing: 0) {
+    private func drgaGestureDidChange(_ value: DragGesture.Value, _ proxy: GeometryProxy) {
+        let offset = offset(proxy: proxy)
+        let width = (value.location.x - value.startLocation.x + offset).rounded(.down)
+        let flags = NSApplication.shared.currentEvent?.modifierFlags ?? NSEvent.ModifierFlags(rawValue: 0)
+        let optionClick = flags.contains([.option])
+
+        Log4swift[Self.self].debug("onChanged[\(columnIndex)] startLocation: '\(value.startLocation.x.rounded(.down))' location: '\(value.location.x.rounded(.down))' width: '\(width.rounded(.down))' offset: '\(offset.rounded(.down))' columnWidth: '\(columnWidth + width)' optionClick: '\(optionClick)'")
+
+        if frameOrigin == .none && optionClick {
+            frameOrigin = proxy.frame(in: .global).origin
+        }
+        add(width: width)
+        // Log4swift["ColumnDrag"].info("onChanged[\(id)] columnWidth: '\(columnWidth)'")
+    }
+
+    private func drgaGestureDidEnd(_ value: DragGesture.Value, _ proxy: GeometryProxy) {
+        let offset = offset(proxy: proxy)
+        let width = (value.location.x - value.startLocation.x + offset).rounded(.down)
+
+        Log4swift[Self.self].debug("onEnded[\(columnIndex)] width: '\(width.rounded(.down))' offset: '\(offset.rounded(.down))' columnWidth: '\(columnWidth + width)'")
+        add(width: width)
+        frameOrigin = .none
+    }
+
+    @ViewBuilder
+    private func verticalLine(_ proxy: GeometryProxy) -> some View {
+        HStack {
+            Spacer()
+            Rectangle()
+                .fill(.gray.opacity(0.14))
+                .frame(width: 1)
+                .padding(.horizontal, 3)
+                // .border(.red.opacity(0.5))
+                .contentShape(Rectangle())
+                .onHover(perform: updateCursor)
+                .gesture(
+                    DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                        .onChanged { drgaGestureDidChange($0, proxy) }
+                        .onEnded { drgaGestureDidEnd($0, proxy) }
+                )
+        }
+    }
+
+    @ViewBuilder
+    private func dragIcon(_ proxy: GeometryProxy) -> some View {
+        VStack(spacing: 0) {
+            Spacer()
+            HStack(spacing: 0) {
                 Spacer()
-                HStack(spacing: 0) {
-                    Spacer()
-                    Divider().frame(height: Self.height)
-                    Image(systemName: "equal")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(
-                            width: debugUI ? (Self.imageWidth + 20) : Self.imageWidth,
-                            height: Self.imageHeight
-                        )
-                        .padding(.all, Self.padding)
-                    // .border(.red)
-                        .rotationEffect(debugUI ? .degrees(0) : .degrees(-90))
-                    // .offset(x: 1)
-                        .background(scrollerBackgroundColor)
-                        .onHover { inside in
-                            if inside {
-                                NSCursor.resizeLeftRight.push()
-                            } else {
-                                NSCursor.pop()
-                            }
-                        }
-                        .gesture(
-                            DragGesture(minimumDistance: 0, coordinateSpace: .local)
-                                .onChanged { value in
-                                    let offset = offset(proxy: proxy)
-                                    let width = (value.location.x - value.startLocation.x + offset).rounded(.down)
-                                    let flags = NSApplication.shared.currentEvent?.modifierFlags ?? NSEvent.ModifierFlags(rawValue: 0)
-                                    let optionClick = flags.contains([.option])
-
-                                    Log4swift[Self.self].debug("onChanged[\(columnIndex)] startLocation: '\(value.startLocation.x.rounded(.down))' location: '\(value.location.x.rounded(.down))' width: '\(width.rounded(.down))' offset: '\(offset.rounded(.down))' columnWidth: '\(columnWidth + width)' optionClick: '\(optionClick)'")
-
-                                    if frameOrigin == .none && optionClick {
-                                        frameOrigin = proxy.frame(in: .global).origin
-                                    }
-                                    add(width: width)
-                                    // Log4swift["ColumnDrag"].info("onChanged[\(id)] columnWidth: '\(columnWidth)'")
-                                }
-                                .onEnded { value in
-                                    let offset = offset(proxy: proxy)
-                                    let width = (value.location.x - value.startLocation.x + offset).rounded(.down)
-
-                                    Log4swift[Self.self].debug("onEnded[\(columnIndex)] width: '\(width.rounded(.down))' offset: '\(offset.rounded(.down))' columnWidth: '\(columnWidth + width)'")
-                                    add(width: width)
-                                    frameOrigin = .none
-                                }
-                        )
-                    Divider().frame(height: Self.height)
-                }
-                .background(debugUI ? Color.white : nil)
-                if debugUI {
+                Image(systemName: "equal")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(
+                        width: debugUI ? (Self.imageWidth + 20) : Self.imageWidth,
+                        height: Self.imageHeight
+                    )
+                    .padding(.all, Self.padding)
+                    .padding(.trailing, 2)
+                // .border(.red)
+                    .rotationEffect(debugUI ? .degrees(0) : .degrees(-90))
+                // .offset(x: 1)
+                // .background(Color.clear)
+                    .background(scrollerBackgroundColor)
+                    .onHover(perform: updateCursor)
+                    .gesture(
+                        DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                            .onChanged { drgaGestureDidChange($0, proxy) }
+                            .onEnded { drgaGestureDidEnd($0, proxy) }
+                    )
+                    .background(debugUI ? Color.white : nil)
+                    .overlay(
+                        Rectangle()
+                            .fill(.gray.opacity(0.18))
+                            .frame(width: 1)
+                        , alignment: .leading)
+                    .overlay(
+                        Rectangle()
+                            .fill(.gray.opacity(0.14))
+                            .frame(width: 1)
+                        , alignment: .trailing)
+            }
+            if debugUI {
+                VStack {
                     HStack {
                         Text("local: " + proxyFrame(proxy.frame(in: .local)))
                             .font(.caption)
@@ -162,6 +242,27 @@ public struct ColumnDrag: View {
                     .background(Color.white)
                 }
             }
+        }
+    }
+
+    /**
+     Even more crap.
+     We are designed in a way that the DragGesture is all the way at the bottom trailing of the GeometryReader.
+     If this design breaks the math at offset(proxy:) will be off.
+
+     Really hacky ...
+     We need a real NSViewRepresentable DragGesture
+     */
+    public var body: some View {
+        // Log4swift[Self.self].info("idealWidth[\(id)]: '\(idealWidth)'")
+        GeometryReader { proxy in
+            switch viewModel.viewType {
+            case .verticalLine:
+                verticalLine(proxy)
+            case .dragIcon:
+                dragIcon(proxy)
+            }
+            // .border(.red)
         }
     }
 }
@@ -180,56 +281,68 @@ public struct ColumnDragContainer: View {
 
     public var body: some View {
         VStack(spacing: 10) {
-            HStack {
+            HStack(spacing: 0) {
                 ForEach(0 ..< colors.count, id: \.self) { index in
-                    ZStack {
+                    ScrollView {
+                        //    HStack { // debug
+                        //        VStack(alignment: .leading, spacing: 2) {
+                        //            Text("minWidth: \(ColumnConfig.MIN_WIDTH)")
+                        //            Text("ideal: \(columnWidths[index])")
+                        //            Text("index: \(index)")
+                        //        }
+                        //        .padding(4)
+                        //        .font(.caption)
+                        //        Spacer()
+                        //    }
                         Rectangle()
-                            .frame(width: columnWidths[index])
-                            .foregroundColor(colors[index])
-//                        VStack {
-//                            Text("minWidth: \(ColumnConfig.MIN_WIDTH)")
-//                            Text("ideal: \(columnWidths[index])")
-//                            Text("index: \(index)")
-//                        }
+                            .frame(width: columnWidths[index] - 10, height: 200 + Double(index) * 50)
+                            .foregroundColor(colors[index].opacity(0.1))
+                            .padding(10)
+                    }
+                    // .border(.red)
+                    .overlay(
                         ColumnDrag(
                             minWidth: ColumnConfig.MIN_WIDTH,
-                            ideal: $columnWidths[index],
-//                            ideal: Binding<CGFloat>(
-//                                get: { self.columnWidths[index] },
-//                                set: { newValue in
-//                                    let flags = NSApplication.shared.currentEvent?.modifierFlags ?? NSEvent.ModifierFlags(rawValue: 0)
-//
-//                                    columnWidths[index] = newValue
-//                                    if flags.contains([.option]) {
-//                                        // DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                                        // this will fucking break the DragGesture locatiom for us
-//                                        // we will move each column to be of the exact width and so the column before us
-//                                        // will become wider for example
-//                                        // this will cause the DragGesture locatiom to appear as if we moved left !!!!
-//                                        // fuck apple.
-//                                        //
-//                                        Log4swift[Self.self].info("optionClick[\(index)]: '\(newValue)'")
-//
-//                                        // this works, since we are avoiding to change the origin of the ColumnDrag before us
-//                                        // columnWidths = (0 ..< columnWidths.count)
-//                                        //     .reduce(into: columnWidths) { partialResult, nextIndex in
-//                                        //         if nextIndex >= index {
-//                                        //             partialResult[nextIndex] = newValue
-//                                        //         }
-//                                        //     }
-//                                        columnWidths = columnWidths.map { _ in newValue }
-//                                        // }
-//                                    }
-//                                }),
+                            // ideal: $columnWidths[index],
+                            ideal: Binding<CGFloat>(
+                                get: { self.columnWidths[index] },
+                                set: { newValue in
+                                    let flags = NSApplication.shared.currentEvent?.modifierFlags ?? NSEvent.ModifierFlags(rawValue: 0)
+
+                                    columnWidths[index] = newValue
+                                    if flags.contains([.option]) {
+                                        // DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        // this will fucking break the DragGesture locatiom for us
+                                        // we will move each column to be of the exact width and so the column before us
+                                        // will become wider for example
+                                        // this will cause the DragGesture locatiom to appear as if we moved left !!!!
+                                        // fuck apple.
+                                        //
+                                        Log4swift[Self.self].info("optionClick[\(index)]: '\(newValue)'")
+
+                                        // this works, since we are avoiding to change the origin of the ColumnDrag before us
+                                        // columnWidths = (0 ..< columnWidths.count)
+                                        //     .reduce(into: columnWidths) { partialResult, nextIndex in
+                                        //         if nextIndex >= index {
+                                        //             partialResult[nextIndex] = newValue
+                                        //         }
+                                        //     }
+                                        columnWidths = columnWidths.map { _ in newValue }
+                                        // }
+                                    }
+                                }),
                             // $columnWidths[index], // .animation(.linear(duration: 5.0)),
                             maxWidth: ColumnConfig.MAX_WIDTH,
                             columnIndex: index
                         )
                         // .debug()
-                    }
+                        , alignment: .bottomTrailing)
                 }
                 Spacer()
             }
+            .padding(10)
+            .padding(.horizontal, 40)
+            Divider()
             HStack {
                 Spacer()
                 Button("Reset") {
@@ -244,10 +357,16 @@ public struct ColumnDragContainer: View {
     }
 }
 
-struct ColumnDrag_Previews: PreviewProvider {
-    static var previews: some View {
-        ColumnDragContainer()
-    }
+#Preview("ColumnDrag - Light") {
+    ColumnDragContainer()
+//        .background(Color.windowBackgroundColor)
+        .environment(\.colorScheme, .light)
+}
+
+#Preview("ColumnDrag - Dark") {
+    ColumnDragContainer()
+        .background(Color.windowBackgroundColor)
+        .environment(\.colorScheme, .dark)
 }
 
 #endif

@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -15,8 +15,8 @@ let package = Package(
             targets: ["IDDSwiftUI"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/kdeda/idd-log4-swift.git", "2.2.1" ..< "3.0.0"),
-        .package(url: "https://github.com/kdeda/idd-swift.git", "2.4.2" ..< "3.0.0"),
+        .package(url: "https://github.com/kdeda/idd-log4-swift.git", "2.2.3" ..< "3.0.0"),
+        .package(url: "https://github.com/kdeda/idd-swift.git", "2.4.8" ..< "3.0.0"),
     ],
     targets: [
         .target(
