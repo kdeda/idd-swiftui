@@ -1,0 +1,410 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F30E18462943C74A002B3CA0 /* ColumnDragApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30E18452943C74A002B3CA0 /* ColumnDragApp.swift */; };
+		F30E184A2943C74B002B3CA0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F30E18492943C74B002B3CA0 /* Assets.xcassets */; };
+		F30E184D2943C74B002B3CA0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F30E184C2943C74B002B3CA0 /* Preview Assets.xcassets */; };
+		FB2848282D57465500A5A3D4 /* Log4swift in Frameworks */ = {isa = PBXBuildFile; productRef = FB2848272D57465500A5A3D4 /* Log4swift */; };
+		FBB4F9C5300CDF4100A03D20 /* IDDSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = FBB4F9C4300CDF4100A03D20 /* IDDSwiftUI */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		F30E18422943C74A002B3CA0 /* ColumnDrag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ColumnDrag.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F30E18452943C74A002B3CA0 /* ColumnDragApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColumnDragApp.swift; sourceTree = "<group>"; };
+		F30E18492943C74B002B3CA0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F30E184C2943C74B002B3CA0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		F30E184E2943C74B002B3CA0 /* ColumnDrag.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ColumnDrag.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F30E183F2943C74A002B3CA0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FBB4F9C5300CDF4100A03D20 /* IDDSwiftUI in Frameworks */,
+				FB2848282D57465500A5A3D4 /* Log4swift in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F30E18392943C74A002B3CA0 = {
+			isa = PBXGroup;
+			children = (
+				F30E18442943C74A002B3CA0 /* ColumnDrag */,
+				F30E18432943C74A002B3CA0 /* Products */,
+				F3FFAC582947920600BEC8C9 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		F30E18432943C74A002B3CA0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F30E18422943C74A002B3CA0 /* ColumnDrag.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F30E18442943C74A002B3CA0 /* ColumnDrag */ = {
+			isa = PBXGroup;
+			children = (
+				F30E18452943C74A002B3CA0 /* ColumnDragApp.swift */,
+				F30E18492943C74B002B3CA0 /* Assets.xcassets */,
+				F30E184E2943C74B002B3CA0 /* ColumnDrag.entitlements */,
+				F30E184B2943C74B002B3CA0 /* Preview Content */,
+			);
+			path = ColumnDrag;
+			sourceTree = "<group>";
+		};
+		F30E184B2943C74B002B3CA0 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				F30E184C2943C74B002B3CA0 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		F3FFAC582947920600BEC8C9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F30E18412943C74A002B3CA0 /* ColumnDrag */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F30E18512943C74B002B3CA0 /* Build configuration list for PBXNativeTarget "ColumnDrag" */;
+			buildPhases = (
+				F30E183E2943C74A002B3CA0 /* Sources */,
+				F30E183F2943C74A002B3CA0 /* Frameworks */,
+				F30E18402943C74A002B3CA0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ColumnDrag;
+			packageProductDependencies = (
+				FBDEC71829BB746A00EB22B0 /* IDDFolderScan */,
+				FB2848272D57465500A5A3D4 /* Log4swift */,
+				FB7AEBAB2E4A36E800866C78 /* IDDFolderScan */,
+				FBB4F9C4300CDF4100A03D20 /* IDDSwiftUI */,
+			);
+			productName = ColumnDrag;
+			productReference = F30E18422943C74A002B3CA0 /* ColumnDrag.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F30E183A2943C74A002B3CA0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1410;
+				LastUpgradeCheck = 1410;
+				TargetAttributes = {
+					F30E18412943C74A002B3CA0 = {
+						CreatedOnToolsVersion = 14.1;
+					};
+				};
+			};
+			buildConfigurationList = F30E183D2943C74A002B3CA0 /* Build configuration list for PBXProject "ColumnDrag" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = F30E18392943C74A002B3CA0;
+			packageReferences = (
+				FB2848252D57463800A5A3D4 /* XCRemoteSwiftPackageReference "idd-swift" */,
+				FB2848262D57465500A5A3D4 /* XCRemoteSwiftPackageReference "idd-log4-swift" */,
+				FBB4F9C3300CDF4100A03D20 /* XCRemoteSwiftPackageReference "idd-swiftui" */,
+			);
+			productRefGroup = F30E18432943C74A002B3CA0 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F30E18412943C74A002B3CA0 /* ColumnDrag */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F30E18402943C74A002B3CA0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F30E184D2943C74B002B3CA0 /* Preview Assets.xcassets in Resources */,
+				F30E184A2943C74B002B3CA0 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F30E183E2943C74A002B3CA0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F30E18462943C74A002B3CA0 /* ColumnDragApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		F30E184F2943C74B002B3CA0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		F30E18502943C74B002B3CA0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		F30E18522943C74B002B3CA0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ColumnDrag/ColumnDrag.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ColumnDrag/Preview Content\"";
+				DEVELOPMENT_TEAM = ME637H7ZM9;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.id-design.v1.columndrag";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		F30E18532943C74B002B3CA0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ColumnDrag/ColumnDrag.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"ColumnDrag/Preview Content\"";
+				DEVELOPMENT_TEAM = ME637H7ZM9;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.id-design.v1.columndrag";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F30E183D2943C74A002B3CA0 /* Build configuration list for PBXProject "ColumnDrag" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F30E184F2943C74B002B3CA0 /* Debug */,
+				F30E18502943C74B002B3CA0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F30E18512943C74B002B3CA0 /* Build configuration list for PBXNativeTarget "ColumnDrag" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F30E18522943C74B002B3CA0 /* Debug */,
+				F30E18532943C74B002B3CA0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		FB2848252D57463800A5A3D4 /* XCRemoteSwiftPackageReference "idd-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kdeda/idd-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.6.8;
+			};
+		};
+		FB2848262D57465500A5A3D4 /* XCRemoteSwiftPackageReference "idd-log4-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kdeda/idd-log4-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.3.1;
+			};
+		};
+		FBB4F9C3300CDF4100A03D20 /* XCRemoteSwiftPackageReference "idd-swiftui" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kdeda/idd-swiftui.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.2.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FB2848272D57465500A5A3D4 /* Log4swift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FB2848262D57465500A5A3D4 /* XCRemoteSwiftPackageReference "idd-log4-swift" */;
+			productName = Log4swift;
+		};
+		FB7AEBAB2E4A36E800866C78 /* IDDFolderScan */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = IDDFolderScan;
+		};
+		FBB4F9C4300CDF4100A03D20 /* IDDSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FBB4F9C3300CDF4100A03D20 /* XCRemoteSwiftPackageReference "idd-swiftui" */;
+			productName = IDDSwiftUI;
+		};
+		FBDEC71829BB746A00EB22B0 /* IDDFolderScan */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = IDDFolderScan;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = F30E183A2943C74A002B3CA0 /* Project object */;
+}

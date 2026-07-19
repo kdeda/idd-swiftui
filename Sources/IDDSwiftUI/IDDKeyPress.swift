@@ -3,14 +3,14 @@
 //  IDDSwiftUI
 //
 //  Created by Klajd Deda on 11/3/24.
-//  Copyright (C) 1997-2025 id-design, inc. All rights reserved.
+//  Copyright (C) 1997-2026 id-design, inc. All rights reserved.
 //
 
 import SwiftUI
-import AppKit
 import Log4swift
 
 #if os(macOS)
+import AppKit
 
 //struct IDDKeyPress: ViewModifier {
 //    // @State var monitorID: Any?

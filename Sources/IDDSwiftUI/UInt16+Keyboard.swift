@@ -3,11 +3,13 @@
 //  IDDSwift
 //
 //  Created by Klajd Deda on 3/5/24.
-//  Copyright (C) 1997-2025 id-design, inc. All rights reserved.
+//  Copyright (C) 1997-2026 id-design, inc. All rights reserved.
 //
 
 import Foundation
+#if os(macOS)
 import Carbon
+#endif
 
 // Convenience
 // https://gist.github.com/rdev/627a254417687a90c493528639465943

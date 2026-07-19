@@ -3,11 +3,10 @@
 //  IDDSwiftUI
 //
 //  Created by Klajd Deda on 4/20/21.
-//  Copyright (C) 1997-2025 id-design, inc. All rights reserved.
+//  Copyright (C) 1997-2026 id-design, inc. All rights reserved.
 //
 
 import SwiftUI
-import Combine
 import IDDSwift
 import Log4swift
 
@@ -54,15 +53,15 @@ struct SliceInfo {
     }
 }
 
-fileprivate struct SliceView: View, Animatable {
+fileprivate struct SliceView: View {
     var info: SliceInfo
     var index: Int
     /**
      Each slice is delayed a bit from the previous to create the illusion of progress
      */
     var delay: Double
-    @State var opacity: Double = 0.1
-    @State private var repeatCount: Int = 1
+    @State private var opacity: Double = 0.1
+    @State private var animationTask: Task<Void, Never>?
 
     /**
      We want to combine 2 animations.
@@ -78,27 +77,22 @@ fileprivate struct SliceView: View, Animatable {
      The trick here is to make sure that SliceInfo.shortDuration + SliceInfo.longDuration
      is less or equal to the duration on the SliceViewModel
      */
-    private func animate() -> Void {
-        withAnimation(
-            .easeIn(duration: SliceInfo.shortDuration)
-            .delay(delay)
-        ) {
-            self.opacity = 1.0
-        }
-        withAnimation(
-            .easeOut(duration: SliceInfo.longDuration)
-            .delay(delay + SliceInfo.shortDuration)
-        ) {
-            self.opacity = 0.1
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + SliceInfo.duration) {
-            // remember the new value at the end of the animation
-            //   if index > 0 && index < 2 {
-            //       Log4swift[Self.self].info("index: '\(index)'")
-            //   }
-            self.repeatCount += 1
-            if self.repeatCount > 1000 {
-                self.repeatCount = 1
+    private func startAnimating() {
+        animationTask = Task {
+            while !Task.isCancelled {
+                withAnimation(
+                    .easeIn(duration: SliceInfo.shortDuration)
+                    .delay(delay)
+                ) {
+                    opacity = 1.0
+                }
+                withAnimation(
+                    .easeOut(duration: SliceInfo.longDuration)
+                    .delay(delay + SliceInfo.shortDuration)
+                ) {
+                    opacity = 0.1
+                }
+                try? await Task.sleep(nanoseconds: .nanoseconds(milliseconds: Int(SliceInfo.duration * 1_000)))
             }
         }
     }
@@ -110,34 +104,27 @@ fileprivate struct SliceView: View, Animatable {
     }
 
     public var body: some View {
-        Group {
-            Rectangle()
-                // .stroke(lineWidth: 1)
-                .cornerRadius(info.sliceWidth/2)
-                .frame(width: info.sliceWidth, height: info.sliceHeight)
-                // .border(Color.yellow)
-                .offset(y: -info.innerCircleRadius)
-                .rotationEffect(.degrees(info.degrees * Double(index)), anchor: .bottom)
-                .opacity(opacity)
-                .onAppear {
-                    animate()
-                }
-                .offset(
-                    x: info.width / 2 - info.sliceWidth / 2,
-                    y: info.innerCircleRadius
-                )
-                .onChange(of: repeatCount, perform: { newValue in
-                    animate()
-                })
-        }
+        Rectangle()
+            .clipShape(RoundedRectangle(cornerRadius: info.sliceWidth / 2))
+            .frame(width: info.sliceWidth, height: info.sliceHeight)
+        // .border(Color.yellow)
+            .offset(y: -info.innerCircleRadius)
+            .rotationEffect(.degrees(info.degrees * Double(index)), anchor: .bottom)
+            .opacity(opacity)
+            .onAppear { startAnimating() }
+            .offset(
+                x: info.width / 2 - info.sliceWidth / 2,
+                y: info.innerCircleRadius
+            )
+            .onDisappear { animationTask?.cancel() }
     }
 }
 
 // https://daringsnowball.net/articles/stateobject-lifecycle/
 public struct Spinner: View {
     private var isAnimating: Bool
-    @State var opacity: Double = 1.0
-    @State var scale: Double = 1.0
+    @State private var opacity: Double = 1.0
+    @State private var scale: Double = 1.0
 
     public init(isAnimating: Bool = false) {
         self.isAnimating = isAnimating
@@ -145,39 +132,40 @@ public struct Spinner: View {
 
     public var body: some View {
         // Log4swift[Self.self].info("isAnimating: '\(isAnimating)'")
+        BodyCount.timed("Spinner") {
+            GeometryReader { proxy in
+                if isAnimating {
+                    let info = SliceInfo(proxy: proxy)
 
-        return GeometryReader { proxy in
-            if isAnimating {
-                let info = SliceInfo(proxy: proxy)
-
-                // Text("\(Double(info.sliceWidth).with2Digits)").font(.caption)
-                ForEach(0 ..< info.sliceCount, id: \.self) { index in
-                    SliceView(info: info, index: index)
-                }
-                // .background(Color.yellow)
-                .frame(width: proxy.size.width, height: proxy.size.height)
-                // not sure why the math is so attrocious
-                // now we have spent 100h on it :-)
-                .offset(x: (info.sliceWidth - proxy.size.width) / 2, y: (info.sliceHeight - proxy.size.height) / 2)
-                // .border(Color.green)
-                .scaleEffect(scale, anchor: .center)
-                // .opacity(opacity)
-                .onAppear(perform: {
-                    // make us visible
-                    // self.opacity = 0.1
-                    self.scale = 0.1
-                    withAnimation(.easeOut(duration: SliceInfo.shortDuration * 2)) {
-                        // self.opacity = 1.0
-                        self.scale = 1.0
+                    // Text("\(Double(info.sliceWidth).with2Digits)").font(.caption)
+                    ForEach(0 ..< info.sliceCount, id: \.self) { index in
+                        SliceView(info: info, index: index)
                     }
-                })
-            } else {
-                Rectangle()
+                    // .background(Color.yellow)
                     .frame(width: proxy.size.width, height: proxy.size.height)
-                    .opacity(0)
+                    // not sure why the math is so attrocious
+                    // now we have spent 100h on it :-)
+                    .offset(x: (info.sliceWidth - proxy.size.width) / 2, y: (info.sliceHeight - proxy.size.height) / 2)
+                    // .border(Color.green)
+                    .scaleEffect(scale, anchor: .center)
+                    // .opacity(opacity)
+                    .onAppear(perform: {
+                        // make us visible
+                        // self.opacity = 0.1
+                        self.scale = 0.1
+                        withAnimation(.easeOut(duration: SliceInfo.shortDuration * 2)) {
+                            // self.opacity = 1.0
+                            self.scale = 1.0
+                        }
+                    })
+                } else {
+                    Rectangle()
+                        .frame(width: proxy.size.width, height: proxy.size.height)
+                        .opacity(0)
+                }
             }
+            // .drawingGroup()
         }
-        .drawingGroup()
     }
 }
 
@@ -186,15 +174,6 @@ struct SpinnerV3_Previews: PreviewProvider {
         Log4swift.configure(fileLogConfig: nil)
 
         return VStack {
-//            SpinnerV3(isAnimating: true)
-//                .frame(width: 16, height: 16)
-//                .foregroundColor(.green)
-////            SpinnerV3()
-////                .frame(width: 24, height: 24)
-////                .foregroundColor(.green)
-//            SpinnerV3()
-//                .frame(width: 32, height: 32)
-//                .foregroundColor(.green)
             HStack {
                 Spinner(isAnimating: true)
                     .frame(width: 128, height: 128)

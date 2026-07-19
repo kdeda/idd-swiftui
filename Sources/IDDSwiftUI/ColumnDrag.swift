@@ -3,7 +3,7 @@
 //  IDDSwiftUI
 //
 //  Created by Klajd Deda on 1/18/23.
-//  Copyright (C) 1997-2025 id-design, inc. All rights reserved.
+//  Copyright (C) 1997-2026 id-design, inc. All rights reserved.
 //
 
 #if os(macOS)
@@ -279,59 +279,40 @@ public struct ColumnDragContainer: View {
     public init() {
     }
 
+    private func columnWidthBinding(for index: Int) -> Binding<CGFloat> {
+        Binding<CGFloat>(
+            get: { self.columnWidths[index] },
+            set: { newValue in
+                let flags = NSApplication.shared.currentEvent?.modifierFlags ?? NSEvent.ModifierFlags(rawValue: 0)
+
+                columnWidths[index] = newValue
+                if flags.contains([.option]) {
+                    Log4swift[Self.self].info("optionClick[\(index)]: '\(newValue)'")
+                    columnWidths = columnWidths.map { _ in newValue }
+                }
+            }
+        )
+    }
+
     public var body: some View {
-        VStack(spacing: 10) {
-            HStack(spacing: 0) {
+        VStack(spacing: 0) {
+            HStack(spacing: 2) {
                 ForEach(0 ..< colors.count, id: \.self) { index in
                     ScrollView {
-                        //    HStack { // debug
-                        //        VStack(alignment: .leading, spacing: 2) {
-                        //            Text("minWidth: \(ColumnConfig.MIN_WIDTH)")
-                        //            Text("ideal: \(columnWidths[index])")
-                        //            Text("index: \(index)")
-                        //        }
-                        //        .padding(4)
-                        //        .font(.caption)
-                        //        Spacer()
-                        //    }
+                        // real content would go here ...
                         Rectangle()
                             .frame(width: columnWidths[index] - 10, height: 200 + Double(index) * 50)
-                            .foregroundColor(colors[index].opacity(0.1))
-                            .padding(10)
+                            .foregroundColor(colors[index].opacity(0.05))
                     }
+                    .background(
+                        Rectangle()
+                            .foregroundColor(colors[index].opacity(0.05))
+                    )
                     // .border(.red)
                     .overlay(
                         ColumnDrag(
                             minWidth: ColumnConfig.MIN_WIDTH,
-                            // ideal: $columnWidths[index],
-                            ideal: Binding<CGFloat>(
-                                get: { self.columnWidths[index] },
-                                set: { newValue in
-                                    let flags = NSApplication.shared.currentEvent?.modifierFlags ?? NSEvent.ModifierFlags(rawValue: 0)
-
-                                    columnWidths[index] = newValue
-                                    if flags.contains([.option]) {
-                                        // DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                        // this will fucking break the DragGesture locatiom for us
-                                        // we will move each column to be of the exact width and so the column before us
-                                        // will become wider for example
-                                        // this will cause the DragGesture locatiom to appear as if we moved left !!!!
-                                        // fuck apple.
-                                        //
-                                        Log4swift[Self.self].info("optionClick[\(index)]: '\(newValue)'")
-
-                                        // this works, since we are avoiding to change the origin of the ColumnDrag before us
-                                        // columnWidths = (0 ..< columnWidths.count)
-                                        //     .reduce(into: columnWidths) { partialResult, nextIndex in
-                                        //         if nextIndex >= index {
-                                        //             partialResult[nextIndex] = newValue
-                                        //         }
-                                        //     }
-                                        columnWidths = columnWidths.map { _ in newValue }
-                                        // }
-                                    }
-                                }),
-                            // $columnWidths[index], // .animation(.linear(duration: 5.0)),
+                            ideal: columnWidthBinding(for: index),
                             maxWidth: ColumnConfig.MAX_WIDTH,
                             columnIndex: index
                         )
@@ -340,10 +321,11 @@ public struct ColumnDragContainer: View {
                 }
                 Spacer()
             }
-            .padding(10)
-            .padding(.horizontal, 40)
+            .padding(20)
             Divider()
             HStack {
+                Text("Option + Drag to resize all at once.")
+                    .padding(.leading, 10)
                 Spacer()
                 Button("Reset") {
                     Log4swift[Self.self].info("Measure Home [NOOP]")
@@ -352,14 +334,14 @@ public struct ColumnDragContainer: View {
                     })
                 }
             }
-            .padding(10)
+            .padding(20)
         }
     }
 }
 
 #Preview("ColumnDrag - Light") {
     ColumnDragContainer()
-//        .background(Color.windowBackgroundColor)
+        .background(Color.windowBackgroundColor)
         .environment(\.colorScheme, .light)
 }
 
