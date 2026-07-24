@@ -33,8 +33,19 @@ public enum BodyCount {
      */
     public static let isEnabled: Bool = {
         let env = ProcessInfo.processInfo.environment
-        let looksProfiled = env["DYLD_INSERT_LIBRARIES"]?.contains("Instruments") ?? false
-
+        let looksProfiled =
+        env["XPC_SERVICE_NAME"]?.contains("Instruments") ?? false
+        || env["__CFBundleIdentifier"]?.contains("Instruments") ?? false
+        
+        /// -IDDSwiftUI.BodyCount D
+        /// to see where these are defined
+        if Log4swift[Self.self].isDebug {
+            env.keys.forEach { key in
+                let value = env[key] ?? ""
+                Log4swift[Self.self].dash("\(key): \(value)")
+                Log4swift[Self.self].info("\(key): \(value)")
+            }
+        }
         return looksProfiled
     }()
 

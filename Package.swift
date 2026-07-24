@@ -15,7 +15,7 @@ let package = Package(
             targets: ["IDDSwiftUI"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/kdeda/idd-log4-swift.git", "2.3.3" ..< "3.0.0"),
+        .package(url: "https://github.com/kdeda/idd-log4-swift.git", "2.3.4" ..< "3.0.0"),
         // .package(name: "idd-swift", path: "../idd-swift"),
         .package(url: "https://github.com/kdeda/idd-swift.git", "2.7.3" ..< "3.0.0"),
     ],
